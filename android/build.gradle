@@ -9,8 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:3.5.4'
     }
 }
 
@@ -42,6 +41,17 @@ android {
 
     defaultConfig {
         minSdkVersion 16
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    dependencies {
+        implementation platform('com.google.firebase:firebase-bom:29.0.0')
+        implementation 'com.google.firebase:firebase-inappmessaging-ktx'
+        implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
+        implementation 'com.google.firebase:firebase-analytics-ktx'
     }
 }
 
