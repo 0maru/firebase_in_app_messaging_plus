@@ -7,7 +7,7 @@ public class SwiftFirebaseInAppMessagingPlusPlugin: NSObject, FlutterPlugin {
   
   public static func register(with registrar: FlutterPluginRegistrar) {
     fiamMethodChannel = FlutterMethodChannel(
-      name: "torico/firebase_in_app_messaging_plus",
+      name: "torico/firebase_in_app_messaging_handler",
       binaryMessenger: registrar.messenger())
     let fiamDelegate = FIAMDelegate()
     InAppMessaging.inAppMessaging().delegate = fiamDelegate

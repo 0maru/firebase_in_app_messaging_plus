@@ -31,6 +31,7 @@ class FirebaseInAppMessagingHandler {
     switch (call.method) {
       case 'onMessageSuccess':
         MessagingData? data;
+        print(call.arguments);
         if (call.arguments != null) {
           data = convertJsonToObject(call.arguments as Map<dynamic, dynamic>);
         }

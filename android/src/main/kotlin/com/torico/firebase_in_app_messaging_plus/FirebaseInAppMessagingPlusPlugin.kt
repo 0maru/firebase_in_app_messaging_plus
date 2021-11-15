@@ -1,5 +1,7 @@
 package com.torico.firebase_in_app_messaging_plus
 
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.NonNull
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
@@ -16,8 +18,7 @@ class FirebaseInAppMessagingPlusPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "torico/firebase_in_app_messaging_plus")
-
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "torico/firebase_in_app_messaging_handler")
         FirebaseInAppMessaging.getInstance().addClickListener(FIAMClickListener(channel))
     }
 
@@ -32,10 +33,12 @@ class FirebaseInAppMessagingPlusPlugin : FlutterPlugin, MethodCallHandler {
 }
 
 class FIAMClickListener(channel: MethodChannel) : FirebaseInAppMessagingClickListener {
-    private var _channel = channel
+    private var _channel: MethodChannel = channel
+
     override fun messageClicked(inAppMessage: InAppMessage, action: Action) {
         println(inAppMessage.data)
         println(action)
+        println(_channel)
         if (inAppMessage.campaignMetadata != null) {
             println(inAppMessage.campaignMetadata?.campaignName)
             println(inAppMessage.campaignMetadata?.campaignId)
@@ -52,10 +55,18 @@ class FIAMClickListener(channel: MethodChannel) : FirebaseInAppMessagingClickLis
                     "campaignInfo" to campaignInfo,
                     "appData" to appData
             )
-            _channel.invokeMethod("onMessageSuccess", params)
+            Handler(Looper.getMainLooper()).post {
+                _channel.invokeMethod("onMessageSuccess", params)
+            }
         } else {
-            val params: Map<Any, Any> = hashMapOf()
-            _channel.invokeMethod("onMessageError", params)
+            val params: Map<Any, Any> = hashMapOf(
+                "code" to "",
+                "message" to "fail",
+                "detail" to ""
+            )
+            Handler(Looper.getMainLooper()).post {
+                _channel.invokeMethod("onMessageError", params)
+            }
         }
     }
 }
